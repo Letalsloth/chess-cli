@@ -33,11 +33,11 @@ public class UI {
 
     public static void printBoard(ChessPiece[][] pieces) {
         System.out.println();
-        for (int line = 0; line < pieces.length; line ++) {
-            System.out.print((8 - line) + " ");
+        for (int row = 0; row < pieces.length; row ++) {
+            System.out.print((8 - row) + " ");
 
-            for (int col = 0; col < pieces[line].length; col ++) {
-                printPiece(pieces[line][col]);
+            for (int col = 0; col < pieces[row].length; col ++) {
+                printPiece(pieces[row][col]);
             }
             System.out.println();
         }

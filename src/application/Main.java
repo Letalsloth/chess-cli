@@ -30,7 +30,7 @@ public class Main {
             }
             catch (ChessException | InputMismatchException e) {
                 System.out.println(e.getMessage());
-                scanner.next();
+                scanner.nextLine();
             }
         }
 
