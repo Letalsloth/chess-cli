@@ -12,6 +12,8 @@ public class UI {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
 
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -37,16 +39,33 @@ public class UI {
             System.out.print((8 - row) + " ");
 
             for (int col = 0; col < pieces[row].length; col ++) {
-                printPiece(pieces[row][col]);
+                printPiece(pieces[row][col], false);
             }
             System.out.println();
         }
         System.out.println("  a b c d e f g h");
     }
 
-    private static void printPiece(ChessPiece piece) {
+    public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
+        System.out.println();
+        for (int row = 0; row < pieces.length; row ++) {
+            System.out.print((8 - row) + " ");
+
+            for (int col = 0; col < pieces[row].length; col ++) {
+                printPiece(pieces[row][col], possibleMoves[row][col]);
+            }
+            System.out.println();
+        }
+        System.out.println("  a b c d e f g h");
+    }
+
+    private static void printPiece(ChessPiece piece, boolean background) {
+        if (background) {
+            System.out.print(ANSI_PURPLE_BACKGROUND);
+        }
+
         if (piece == null) {
-            System.out.print("-");
+            System.out.print("-" + ANSI_RESET);
         }
         else {
             String text_color;
