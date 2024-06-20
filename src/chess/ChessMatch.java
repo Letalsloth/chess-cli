@@ -8,14 +8,26 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
     private final Board board;
+    private int turn;
+    private Color currentPlayer;
 
     public ChessMatch() {
         board = new Board(8, 8);
+        turn = 1;
+        currentPlayer = Color.WHITE;
         initialSetup();
     }
 
     public Board getBoard() {
         return  board;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
     }
 
     // Down casting the Piece 2d array to chessPiece 2d array
@@ -47,12 +59,16 @@ public class ChessMatch {
         validateCurrentPosition(current);
         validateTargetPosition(current, target);
         Piece capturedPiece = movePiece(current, target);
+        nextTurn();
         return (ChessPiece) capturedPiece;
     }
 
     private void validateCurrentPosition(Position position) {
         if (!board.pieceInPosition(position)) {
             throw new ChessException("No piece in currentPosition");
+        }
+        if (currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
+            throw new ChessException("The chosen piece is not yours");
         }
         if (!board.piece(position).anyPossibleMove()) {
             throw new ChessException("There are no possible moves for this piece");
@@ -63,6 +79,11 @@ public class ChessMatch {
         if (!board.piece(currentPosition).possibleMove(targetPosition)) {
             throw new ChessException("This piece cannot move to target position");
         }
+    }
+
+    private void nextTurn() {
+        turn++;
+        currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
     private Piece movePiece(Position currentPosition, Position targetPosition) {
