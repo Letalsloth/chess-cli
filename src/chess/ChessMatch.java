@@ -6,10 +6,15 @@ import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChessMatch {
     private final Board board;
     private int turn;
     private Color currentPlayer;
+    private List<Piece> piecesOnBoard = new ArrayList<>();
+    private List<Piece> capturedPieces = new ArrayList<>();
 
     public ChessMatch() {
         board = new Board(8, 8);
@@ -30,6 +35,14 @@ public class ChessMatch {
         return currentPlayer;
     }
 
+    public List<Piece> getPiecesOnBoard() {
+        return piecesOnBoard;
+    }
+
+    public List<Piece> getCapturedPieces() {
+        return capturedPieces;
+    }
+
     // Down casting the Piece 2d array to chessPiece 2d array
     public ChessPiece[][] getPieces() {
         ChessPiece[][] chessPieces = new ChessPiece[board.getRows()][board.getColumns()];
@@ -45,6 +58,7 @@ public class ChessMatch {
 
     private void placeNewPiece(char column, int row, ChessPiece piece) {
         board.placePiece(piece, new ChessPosition(column, row).toPosition());
+        piecesOnBoard.add(piece);
     }
 
     public boolean[][] possibleMoves(ChessPosition sourcePosition) {
@@ -90,6 +104,12 @@ public class ChessMatch {
         Piece pieceToMove = board.removePiece(currentPosition);
         Piece capturedPiece = board.removePiece(targetPosition);
         board.placePiece(pieceToMove, targetPosition);
+
+        if (capturedPiece != null) {
+            piecesOnBoard.remove(capturedPiece);
+            capturedPieces.add(capturedPiece);
+        }
+
         return capturedPiece;
     }
 
