@@ -14,6 +14,8 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private boolean check;
+    private boolean checkMate;
+
     private List<Piece> piecesOnBoard = new ArrayList<>();
     private List<Piece> capturedPieces = new ArrayList<>();
 
@@ -39,6 +41,10 @@ public class ChessMatch {
 
     public boolean getCheck() {
         return check;
+    }
+
+    public boolean getCheckMate() {
+        return checkMate;
     }
 
     public List<Piece> getPiecesOnBoard() {
@@ -86,7 +92,13 @@ public class ChessMatch {
         }
         check = isKingInCheck(opponent(currentPlayer));
 
-        nextTurn();
+        if (isCheckMate(opponent(currentPlayer))) {
+            checkMate = true;
+        }
+        else {
+            nextTurn();
+        }
+
         return (ChessPiece) capturedPiece;
     }
 
@@ -166,8 +178,38 @@ public class ChessMatch {
         return false;
     }
 
+    private boolean isCheckMate(Color color) {
+        if (!isKingInCheck(color)) {
+            return false;
+        }
+
+        List<Piece> list = piecesOnBoard.stream().filter(x -> ((ChessPiece) x).getColor()
+                == color).toList();
+        for (Piece p : list) {
+            boolean[][] grid = p.possibleMoves();
+            for (int row = 0; row < board.getRows(); row++) {
+                for (int col = 0; col < board.getColumns(); col++) {
+                    if (grid[row][col]) {
+                        //Simulating the piece movement to see if the king check is removed
+                        Position current = ((ChessPiece)p).getChessPosition().toPosition();
+                        Position target = new Position(row, col);
+                        Piece capturedPiece = movePiece(current, target);
+                        boolean isCheck = isKingInCheck(color);
+                        undoMove(current, target, capturedPiece);
+
+                        if (!isCheck) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     private void initialSetup() {
         placeNewPiece('a', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('h', 1, new Rook(board, Color.WHITE));
         placeNewPiece('a', 1, new Rook(board, Color.WHITE));
 
         placeNewPiece('e', 8, new King(board, Color.BLACK));
