@@ -1,6 +1,7 @@
 package chess.pieces;
 
 import boardgame.Board;
+import boardgame.Position;
 import chess.ChessPiece;
 import chess.Color;
 
@@ -15,8 +16,57 @@ public class Knight extends ChessPiece {
         return "N";
     }
 
+    private boolean canMove(Position position) {
+        ChessPiece piece = (ChessPiece) getBoard().piece(position);
+        return piece == null || piece.getColor() != getColor();
+    }
+
     @Override
     public boolean[][] possibleMoves() {
-        return new boolean[0][];
+        boolean[][] grid = new boolean[getBoard().getRows()][getBoard().getColumns()];
+
+        Position pos = new Position(0, 0);
+
+        pos.setValues(position.getRow() - 1, position.getColumn() - 2);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() - 2, position.getColumn() - 1);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() - 2, position.getColumn() + 1);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() - 1, position.getColumn() + 2);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() + 1, position.getColumn() + 2);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() + 2, position.getColumn() + 1);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() + 2, position.getColumn() - 1);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        pos.setValues(position.getRow() + 1, position.getColumn() - 2);
+        if (getBoard().positionExists(pos) && canMove(pos)) {
+            grid[pos.getRow()][pos.getColumn()] = true;
+        }
+
+        return grid;
     }
 }

@@ -3,10 +3,7 @@ package chess;
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
-import chess.pieces.Bishop;
-import chess.pieces.King;
-import chess.pieces.Pawn;
-import chess.pieces.Rook;
+import chess.pieces.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -228,6 +225,11 @@ public class ChessMatch {
         placeNewPiece('f', 1, new Bishop(board, Color.WHITE));
         placeNewPiece('f', 8, new Bishop(board, Color.BLACK));
         placeNewPiece('c', 1, new Bishop(board, Color.WHITE));
+
+        placeNewPiece('b', 8, new Knight(board, Color.BLACK));
+        placeNewPiece('g', 1, new Knight(board, Color.WHITE));
+        placeNewPiece('g', 8, new Knight(board, Color.BLACK));
+        placeNewPiece('b', 1, new Knight(board, Color.WHITE));
 
         placeNewPiece('e', 8, new King(board, Color.BLACK));
         placeNewPiece('e', 1, new King(board, Color.WHITE));
