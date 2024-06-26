@@ -135,6 +135,30 @@ public class ChessMatch {
             capturedPieces.add(capturedPiece);
         }
 
+        // castling king side rook
+        if (pieceToMove instanceof King && targetPosition.getColumn() ==
+                currentPosition.getColumn() + 2) {
+            Position currentTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() + 3);
+            Position targetTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() + 1);
+            ChessPiece rook = (ChessPiece) board.removePiece(currentTowerPosition);
+            board.placePiece(rook, targetTowerPosition);
+            rook.increaseMoveCount();
+        }
+
+        // castling queen side rook
+        if (pieceToMove instanceof King && targetPosition.getColumn() ==
+                currentPosition.getColumn() - 2) {
+            Position currentTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() - 4);
+            Position targetTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() - 1);
+            ChessPiece rook = (ChessPiece) board.removePiece(currentTowerPosition);
+            board.placePiece(rook, targetTowerPosition);
+            rook.increaseMoveCount();
+        }
+
         return capturedPiece;
     }
 
@@ -147,6 +171,30 @@ public class ChessMatch {
             board.placePiece(capturedPiece, targetPosition);
             capturedPieces.remove(capturedPiece);
             piecesOnBoard.add(capturedPiece);
+        }
+
+        // reverse king side castling
+        if (pieceToMove instanceof King && targetPosition.getColumn() ==
+                currentPosition.getColumn() + 2) {
+            Position currentTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() + 3);
+            Position targetTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getRow() + 1);
+            ChessPiece rook = (ChessPiece) board.removePiece(targetTowerPosition);
+            board.placePiece(rook, currentTowerPosition);
+            rook.decreaseMoveCount();
+        }
+
+        // reverse queen side castling
+        if (pieceToMove instanceof King && targetPosition.getColumn() ==
+                currentPosition.getColumn() - 2) {
+            Position currentTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getColumn() - 4);
+            Position targetTowerPosition = new Position(currentPosition.getRow(),
+                    currentPosition.getRow() - 1);
+            ChessPiece rook = (ChessPiece) board.removePiece(targetTowerPosition);
+            board.placePiece(rook, currentTowerPosition);
+            rook.decreaseMoveCount();
         }
     }
 
@@ -234,7 +282,7 @@ public class ChessMatch {
         placeNewPiece('d', 8, new Queen(board, Color.BLACK));
         placeNewPiece('d', 1, new Queen(board, Color.WHITE));
 
-        placeNewPiece('e', 8, new King(board, Color.BLACK));
-        placeNewPiece('e', 1, new King(board, Color.WHITE));
+        placeNewPiece('e', 8, new King(board, Color.BLACK, this));
+        placeNewPiece('e', 1, new King(board, Color.WHITE, this));
     }
 }
