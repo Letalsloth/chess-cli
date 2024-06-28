@@ -14,9 +14,10 @@ public class ChessMatch {
     private Color currentPlayer;
     private boolean check;
     private boolean checkMate;
+    private ChessPiece enPassantVulnerable;
 
-    private List<Piece> piecesOnBoard = new ArrayList<>();
-    private List<Piece> capturedPieces = new ArrayList<>();
+    private final List<Piece> piecesOnBoard = new ArrayList<>();
+    private final List<Piece> capturedPieces = new ArrayList<>();
 
     public ChessMatch() {
         board = new Board(8, 8);
@@ -44,6 +45,10 @@ public class ChessMatch {
 
     public boolean getCheckMate() {
         return checkMate;
+    }
+
+    public ChessPiece getEnPassantVulnerable() {
+        return enPassantVulnerable;
     }
 
     public List<Piece> getPiecesOnBoard() {
@@ -89,6 +94,8 @@ public class ChessMatch {
             undoMove(current, target, capturedPiece);
             throw new ChessException("You can't put yourself in check");
         }
+
+        ChessPiece movedPiece = (ChessPiece) board.piece(target);
         check = isKingInCheck(opponent(currentPlayer));
 
         if (isCheckMate(opponent(currentPlayer))) {
@@ -96,6 +103,17 @@ public class ChessMatch {
         }
         else {
             nextTurn();
+        }
+
+        //en passant
+        boolean whitePawnMoved = target.getRow() == current.getRow() - 2;
+        boolean blackPawnMoved = target.getRow() == current.getRow() + 2;
+
+        if (movedPiece instanceof Pawn && (whitePawnMoved || blackPawnMoved)) {
+            enPassantVulnerable = movedPiece;
+        }
+        else {
+            enPassantVulnerable = null;
         }
 
         return (ChessPiece) capturedPiece;
@@ -159,6 +177,23 @@ public class ChessMatch {
             rook.increaseMoveCount();
         }
 
+        // en passant
+        if (pieceToMove instanceof Pawn) {
+            boolean enPassantMovement = currentPosition.getColumn() != targetPosition.getColumn() && capturedPiece == null;
+            if (enPassantMovement) {
+                Position pawnPosition;
+                if (pieceToMove.getColor() == Color.WHITE) {
+                    pawnPosition = new Position(targetPosition.getRow() + 1, targetPosition.getColumn());
+                }
+                else {
+                    pawnPosition = new Position(targetPosition.getRow() - 1, targetPosition.getColumn());
+                }
+                capturedPiece = board.removePiece(pawnPosition);
+                capturedPieces.add(capturedPiece);
+                piecesOnBoard.remove(capturedPiece);
+            }
+        }
+
         return capturedPiece;
     }
 
@@ -195,6 +230,23 @@ public class ChessMatch {
             ChessPiece rook = (ChessPiece) board.removePiece(targetTowerPosition);
             board.placePiece(rook, currentTowerPosition);
             rook.decreaseMoveCount();
+        }
+
+        // en passant
+        if (pieceToMove instanceof Pawn) {
+            boolean enPassantMovement = currentPosition.getColumn() != targetPosition.getColumn() &&
+                    capturedPiece == enPassantVulnerable;
+            ChessPiece pawn = (ChessPiece) board.removePiece(targetPosition);
+
+            if (enPassantMovement) {
+                Position pawnPosition;
+                if (pieceToMove.getColor() == Color.WHITE) {
+                    pawnPosition = new Position(3, targetPosition.getColumn());
+                } else {
+                    pawnPosition = new Position(4, targetPosition.getColumn());
+                }
+                board.placePiece(pawn, pawnPosition);
+            }
         }
     }
 
@@ -258,10 +310,10 @@ public class ChessMatch {
 
     private void initialSetup() {
         for (int i = 0; i < 8; i++) {
-            placeNewPiece((char) (i + 'a'), 2, new Pawn(board, Color.WHITE));
+            placeNewPiece((char) (i + 'a'), 2, new Pawn(board, Color.WHITE, this));
         }
         for (int i = 0; i < 8; i++) {
-            placeNewPiece((char) (i + 'a'), 7, new Pawn(board, Color.BLACK));
+            placeNewPiece((char) (i + 'a'), 7, new Pawn(board, Color.BLACK, this));
         }
 
         placeNewPiece('a', 8, new Rook(board, Color.BLACK));

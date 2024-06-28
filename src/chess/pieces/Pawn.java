@@ -2,13 +2,21 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
 
-    public Pawn(Board board, Color color) {
+    private final ChessMatch match;
+
+    public Pawn(Board board, Color color, ChessMatch match) {
         super(board, color);
+        this.match = match;
+    }
+
+    public ChessMatch getMatch() {
+        return match;
     }
 
     @Override
@@ -45,6 +53,25 @@ public class Pawn extends ChessPiece {
             if (getBoard().positionExists(pos) && isThereOpponentPiece(pos)) {
                 grid[pos.getRow()][pos.getColumn()] = true;
             }
+
+            //white en passant
+            if (position.getRow() == 3) {
+                Position right = new Position(position.getRow(), position.getColumn() + 1);
+                boolean checkRightPositionAndPiece = getBoard().positionExists(right) && isThereOpponentPiece(right);
+                boolean rightPieceIsVulnerable = getBoard().piece(right) == match.getEnPassantVulnerable();
+
+                Position left = new Position(position.getRow(), position.getColumn() - 1);
+                boolean checkLeftPositionAndPiece = getBoard().positionExists(left) && isThereOpponentPiece(left);
+                boolean leftPieceIsVulnerable = getBoard().piece(left) == match.getEnPassantVulnerable();
+
+                if (checkRightPositionAndPiece && rightPieceIsVulnerable) {
+                    grid[right.getRow() - 1][right.getColumn()] = true;
+                }
+
+                if (checkLeftPositionAndPiece && leftPieceIsVulnerable) {
+                    grid[left.getRow() - 1][left.getColumn()] = true;
+                }
+            }
         }
         else {
             pos.setValues(position.getRow() + 1, position.getColumn());
@@ -69,6 +96,25 @@ public class Pawn extends ChessPiece {
             pos.setValues(position.getRow() + 1, position.getColumn() - 1);
             if (getBoard().positionExists(pos) && isThereOpponentPiece(pos)) {
                 grid[pos.getRow()][pos.getColumn()] = true;
+            }
+
+            //black en passant
+            if (position.getRow() == 4) {
+                Position right = new Position(position.getRow(), position.getColumn() + 1);
+                boolean checkRightPositionAndPiece = getBoard().positionExists(right) && isThereOpponentPiece(right);
+                boolean rightPieceIsVulnerable = getBoard().piece(right) == match.getEnPassantVulnerable();
+
+                Position left = new Position(position.getRow(), position.getColumn() - 1);
+                boolean checkLeftPositionAndPiece = getBoard().positionExists(left) && isThereOpponentPiece(left);
+                boolean leftPieceIsVulnerable = getBoard().piece(left) == match.getEnPassantVulnerable();
+
+                if (checkRightPositionAndPiece && rightPieceIsVulnerable) {
+                    grid[right.getRow() + 1][right.getColumn()] = true;
+                }
+
+                if (checkLeftPositionAndPiece && leftPieceIsVulnerable) {
+                    grid[left.getRow() + 1][left.getColumn()] = true;
+                }
             }
         }
 
