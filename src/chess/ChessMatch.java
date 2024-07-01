@@ -4,8 +4,6 @@ import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
 import chess.pieces.*;
-
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,7 +145,7 @@ public class ChessMatch {
                 type.equalsIgnoreCase("r") &&
                 type.equalsIgnoreCase("b");
         if (wrongType) {
-            throw new InvalidParameterException("Invalid type for promotion");
+            return promoted;
         }
 
         Position pos = promoted.getChessPosition().toPosition();

@@ -42,6 +42,15 @@ public class Main {
                 if (match.getPromoted() != null) {
                     System.out.println("Enter piece for promotion (Q/N/R/B): ");
                     String type = scanner.next();
+
+                    boolean wrongType = type.equalsIgnoreCase("q") &&
+                            type.equalsIgnoreCase("n") &&
+                            type.equalsIgnoreCase("r") &&
+                            type.equalsIgnoreCase("b");
+                    if (wrongType) {
+                        System.out.println("Invalid value! Enter piece for promotion (Q/N/R/B): ");
+                        type = scanner.next();
+                    }
                     match.replacePromotedPiece(type);
                 }
             }
